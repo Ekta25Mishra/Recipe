@@ -3,25 +3,48 @@ import { useParams } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { recipecontext } from "../context/RecipeContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SingleRecipe = () => {
 
-  const navigate=useNavigate()
   const {data, setdata}=useContext(recipecontext);
-  const {register, handleSubmit, reset}=useForm();
-
-  const SubmitHandler=(recipe)=>{
-  };
-
+  const navigate=useNavigate();
   const params =useParams();
   const recipe=data.find((recipe)=>params.id==recipe.id);
-  console.log(recipe);
+
+  const {register, handleSubmit, reset}=useForm({
+    defaultValues : {
+      title:recipe.title,
+      chef:recipe.chef,
+      image:recipe.image,
+      inst:recipe.inst,
+      desc:recipe.desc,
+      ingr:recipe.ingr,
+    },
+  });
+
+  const SubmitHandler=(recipe)=>{
+    const index=data.findIndex((recipe)=>params.id == recipe.id);
+    const copydata=[...data];
+    copydata[index]={...copydata[index], ...recipe};
+    setdata(copydata);
+    toast.success("Recipe updated!")
+  };
+
+  const DeleteHandler=()=>{
+    const filterdata=data.filter((r)=>r.id != params.id);
+    setdata(filterdata);
+    toast.success("recipe deleted!");
+    navigate("/recipes");
+  }
   
-  return recipe ?(
+  return recipe ? (
     <div className="w-full flex">
     <div className="left w-1/2 p-2">
       <h1 className="text-4xl font-black">{recipe.title} </h1>
       <img className="h-[20vh]" src={recipe.image} alt="" />
+      <h1>{recipe.chef} </h1>
+      <p>{recipe.desc} </p>
     </div>
 
     <div className="right w-1/2 p-2">
@@ -29,7 +52,6 @@ const SingleRecipe = () => {
       <input
       className="block border-b outline-0 p-2"
       {...register("image")}
-      value={recipe.image}
        type="url" 
        placeholder="Enter image url"
       />
@@ -38,7 +60,6 @@ const SingleRecipe = () => {
       <input
       className="block border-b outline-0 p-2"
       {...register("title")}
-      value={recipe.title}
        type="text" 
        placeholder="Recipe title" 
       />
@@ -46,7 +67,6 @@ const SingleRecipe = () => {
       <input
       className="block border-b outline-0 p-2"
       {...register("chef")}
-      value={recipe.chef}
        type="text" 
        placeholder="Chef Name" 
       />
@@ -55,7 +75,6 @@ const SingleRecipe = () => {
       <textarea
       className="block border-b outline-0 p-2"
       {...register("desc")} 
-      value={recipe.desc}
        placeholder="Start from here" 
       ></textarea>
       
@@ -77,7 +96,6 @@ const SingleRecipe = () => {
       <select
       className="block text-gray-500 border-b outline-0 p-2"
       {...register("category")} 
-      value={recipe.category}
        placeholder="Write instructions seperated by comma" 
       >
         <option value="breakfast">Breakfast</option>
@@ -87,7 +105,8 @@ const SingleRecipe = () => {
       </select>
 
       <button className="block mt-5 bg-blue-900 px-4 py-2 rounded">Update Recipe</button>
-      <button className="block mt-5 bg-red-900 px-4 py-2 rounded">Delete Recipe</button>
+
+      <button onClick={DeleteHandler} className="block mt-5 bg-red-900 px-4 py-2 rounded">Delete Recipe</button>
     </form>
     </div>
     </div>
