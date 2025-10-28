@@ -14,12 +14,12 @@ const SingleRecipe = () => {
 
   const {register, handleSubmit, reset}=useForm({
     defaultValues : {
-      title:recipe.title,
-      chef:recipe.chef,
-      image:recipe.image,
-      inst:recipe.inst,
-      desc:recipe.desc,
-      ingr:recipe.ingr,
+      title:recipe?.title,
+      chef:recipe?.chef,
+      image:recipe?.image,
+      inst:recipe?.inst,
+      desc:recipe?.desc,
+      ingr:recipe?.ingr,
     },
   });
 
@@ -28,24 +28,47 @@ const SingleRecipe = () => {
     const copydata=[...data];
     copydata[index]={...copydata[index], ...recipe};
     setdata(copydata);
+    localStorage.setItem("recipes", JSON.stringify(copydata));
     toast.success("Recipe updated!")
   };
 
   const DeleteHandler=()=>{
     const filterdata=data.filter((r)=>r.id != params.id);
     setdata(filterdata);
+    localStorage.setItem("recipes", JSON.stringify(filterdata));
     toast.success("recipe deleted!");
     navigate("/recipes");
   }
+
+  const favourite=JSON.parse(localStorage.getItem("fav")) || [];
+  
+
+  const FavHandler=()=>{
+    favourite.push(recipe)
+    localStorage.setItem("fav", JSON.stringify(favourite))
+    };
+
+  const UnFavHandler=()=>{};
   
   return recipe ? (
     <div className="w-full flex">
-    <div className="left w-1/2 p-2">
-      <h1 className="text-4xl font-black">{recipe.title} </h1>
+
+       <div className="left relative w-1/2  ">
+       {favourite.includes(recipe) ? (
+        <i
+         onClick={UnFavHandler} 
+         class="right-[5%] absolute text-3xl text-red-400 ri-heart-fill"></i>
+       ) : 
+       <i 
+       onClick={FavHandler} 
+       class="right-[5%] absolute text-3xl text-red-400 ri-heart-line"></i>
+       }
+
+      <h1 className="text-5xl font-black">{recipe.title} </h1>
       <img className="h-[20vh]" src={recipe.image} alt="" />
       <h1>{recipe.chef} </h1>
       <p>{recipe.desc} </p>
-    </div>
+   </div>
 
     <div className="right w-1/2 p-2">
      <form className="w-1/2 p-2" onSubmit={handleSubmit(SubmitHandler)}>

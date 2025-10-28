@@ -10,6 +10,8 @@ const Navbar = () => {
       <NavLink className={(e)=>e.isActive ? "text-red-400" : ""} to='/recipes'>Recipes</NavLink>
 
       <NavLink className={`px-4 rounded py-2 bg-gray-900  ${(e)=>e.isActive ? "text-red-400" : ""}`} to='/create-recipe'>Create Recipe</NavLink>
+
+      <NavLink className={(e)=>e.isActive ? "text-red-400" : ""} to='/fav'>Favourite</NavLink>
     </div>
   )
 }
